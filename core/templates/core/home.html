@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+
+{% block title %}Backoffice Home{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <h1 class="mb-3">Backoffice</h1>
+    <p class="text-muted">Internal tool for time, payroll, clients and invoices.</p>
+
+    <div class="row g-3 mt-3">
+      <div class="col-sm-6">
+        <a href="/log-time/" class="btn btn-primary w-100">Log Time</a>
+      </div>
+      <div class="col-sm-6">
+        <a href="/time-entries/" class="btn btn-outline-primary w-100">View Time Entries</a>
+      </div>
+      <div class="col-sm-6">
+        <a href="/payroll-summary/" class="btn btn-success w-100">Payroll Summary</a>
+      </div>
+      <div class="col-sm-6">
+        <a href="/clients/" class="btn btn-outline-secondary w-100">Clients</a>
+      </div>
+      <div class="col-sm-6">
+        <a href="/invoices/" class="btn btn-outline-dark w-100">Invoices</a>
+      </div>
+      <div class="col-sm-6">
+        <a href="/admin/" class="btn btn-outline-secondary w-100">Admin</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

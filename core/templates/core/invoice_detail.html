@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice {{ invoice.invoice_number }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+
+    <style>
+      body { font-family: Arial, sans-serif; margin: 20px; }
+      .header { width: 100%; margin-bottom: 20px; }
+      .header-left { float: left; width: 60%; }
+      .header-right { float: right; width: 35%; text-align: right; }
+      .company-logo { max-height: 80px; margin-bottom: 10px; }
+      h1, h2, h3, h4 { margin: 0; padding: 0; }
+      .company-details { font-size: 12px; margin-top: 5px; }
+      .qr-code { max-height: 80px; margin-top: 10px; }
+      .section { margin-top: 20px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+      th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
+      th { background: #f0f0f0; }
+      .totals td { border: none; }
+      .totals tr td:last-child { text-align: right; }
+      .totals-label { text-align: right; }
+      .no-border { border: none !important; }
+      .footer { font-size: 12px; margin-top: 30px; }
+      .no-print { margin-bottom: 10px; }
+      @media print {
+          .no-print { display: none; }
+          body { margin: 0; }
+      }
+    </style>
+</head>
+<body>
+<div class="no-print">
+  <button onclick="window.print()">Print / Save as PDF</button>
+</div>
+
+<div class="header">
+  <div class="header-left">
+    <!-- Company logo -->
+    <img src="{% static 'core/logo.png' %}" alt="Company Logo" class="company-logo">
+
+    <!-- Company details: customise these lines -->
+    <div class="company-details">
+      <strong>Your Company Name Pte Ltd</strong><br>
+      123 Example Street #01-01<br>
+      Singapore 123456<br>
+      UEN: 201234567A<br>
+      GST Reg No: (if applicable)
+    </div>
+
+    <!-- QR code (e.g. PayNow) -->
+    <div class="company-details">
+      <strong>Scan to Pay</strong><br>
+      <img src="{% static 'core/paynow_qr.png' %}" alt="PayNow QR" class="qr-code">
+    </div>
+  </div>
+
+  <div class="header-right">
+    <h1>INVOICE</h1>
+    <div style="margin-top: 10px; font-size: 13px;">
+      <strong>Invoice #:</strong> {{ invoice.invoice_number }}<br>
+      <strong>Date:</strong> {{ invoice.issue_date }}<br>
+      <strong>Due Date:</strong> {{ invoice.due_date }}<br>
+      <strong>Status:</strong> {{ invoice.get_status_display }}
+    </div>
+  </div>
+
+  <div style="clear: both;"></div>
+</div>
+
+<hr>
+
+<div class="section">
+  <h3>Bill To:</h3>
+  <p style="font-size: 13px;">
+    <strong>{{ invoice.client.name }}</strong><br>
+    {{ invoice.client.billing_address|linebreaksbr }}<br>
+    {% if invoice.client.email %}Email: {{ invoice.client.email }}{% endif %}
+  </p>
+</div>
+
+<div class="section">
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th style="width: 10%;">Qty</th>
+        <th style="width: 15%;">Unit Price</th>
+        <th style="width: 15%;">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for line in lines %}
+      <tr>
+        <td>{{ line.description }}</td>
+        <td>{{ line.quantity }}</td>
+        <td>{{ line.unit_price }}</td>
+        <td>{{ line.line_total }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" style="text-align: center;">No line items.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <table class="totals">
+    <tr>
+      <td class="no-border" style="width: 65%;"></td>
+      <td class="no-border totals-label" style="width: 20%;"><strong>Total:</strong></td>
+      <td class="no-border" style="width: 15%;"><strong>{{ invoice.total_amount }}</strong></td>
+    </tr>
+  </table>
+</div>
+
+{% if invoice.notes %}
+<div class="section">
+  <h4>Notes</h4>
+  <p style="font-size: 12px;">{{ invoice.notes|linebreaksbr }}</p>
+</div>
+{% endif %}
+
+<div class="footer">
+  <h4>Payment Details</h4>
+  <p>
+    Bank: Your Bank Name<br>
+    Account Name: Your Company Name Pte Ltd<br>
+    Account No: 123-456-789<br>
+    PayNow UEN: 201234567A<br>
+    Payment Terms: {{ invoice.client.payment_terms_days }} days from invoice date
+  </p>
+  <p>
+    Thank you for your business.
+  </p>
+</div>
+
+</body>
+</html>
